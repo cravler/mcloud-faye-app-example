@@ -1,0 +1,46 @@
+
+mysql:
+    image: mysql:5
+    env:
+        MYSQL_ROOT_PASSWORD: '123123'
+    volumes:
+        .mcloud/mysql/my.cnf: /etc/my.cnf
+        .mcloud/volumes/mysql: /var/lib/mysql
+
+postfix:
+    image: previousnext/postfix
+
+redis:
+    image: redis:2.8
+
+php:
+    wait: 1800
+    image: cravler/php5-fpm
+    env:
+        PHP5_DATE_TIMEZONE: 'Europe/Tallinn'
+    volumes:
+        .: /var/www
+        .mcloud/volumes/composer: /.composer
+    cmd: .mcloud/php/run.sh
+
+faye-app:
+    image: cravler/faye-app
+    env:
+        FAYE_MOUNT: '/pub-sub'
+        FAYE_TIMEOUT: '10'
+        FAYE_ENGINE: 'faye-app/engines/redis'
+        FAYE_ENGINE_REDIS_HOST: 'redis'
+        FAYE_EXTENSIONS: 'faye-app/extensions/security-check'
+        FAYE_EXT_SECURITY_CHECK_URL: 'http://nginx/faye-app/security'
+        FAYE_EXT_SECURITY_CHECK_KEY: 'security'
+        ~dev:
+            FAYE_MONITORING: 'faye-app/monitoring/debug,faye-app/monitoring/web-debug'
+            FAYE_WEB_DEBUG_PORT: '8080:'
+            FAYE_WEB_DEBUG_URL_PREFIX: '/pub-sub/debug'
+
+nginx:
+    image: nginx:1.7.7
+    volumes:
+        .: /var/www
+        .mcloud/nginx/nginx.conf: /etc/nginx/nginx.conf
+    cmd: nginx
