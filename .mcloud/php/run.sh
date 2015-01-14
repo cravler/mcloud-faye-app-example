@@ -14,7 +14,9 @@ if [ ! -d /var/www/sf ]; then
     /var/www/sf/app/console doctrine:database:create
 
     # Install faye-app bundle
+    cp /var/www/sf/app/config/routing.yml /var/www/sf/app/config/routing_backup.yml
     /var/www/sf/app/console generate:bundle --namespace=Cravler/FayeAppBundle --no-interaction --dir=/var/www/sf/src
+    mv /var/www/sf/app/config/routing_backup.yml /var/www/sf/app/config/routing.yml
     composer require cravler/faye-app-bundle:dev-master --working-dir=/var/www/sf/
     rm -rf /var/www/sf/src/Cravler
     /var/www/sf/app/console assets:install sf/web/
