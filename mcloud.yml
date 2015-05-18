@@ -39,6 +39,7 @@ faye-app:
             FAYE_WEB_DEBUG_URL_PREFIX: '/pub-sub/debug'
 
 nginx:
+    web: 80
     image: nginx:1.7.7
     volumes:
         .: /var/www
